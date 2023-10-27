@@ -1,0 +1,555 @@
+Nested Document
+
+
+use BookStore
+switched to db BookStore
+db.books.insertOne({title:"The way of kings",author:"Brandon Sanderson",Rating:9,pages:400,generes:["fantacy"],reviews:[{name:"yoshi",body:"Great book!!"},{name:"vinay",body:"noce book"}]})
+
+db.books.find().pretty()
+{
+  _id: ObjectId("6530b9c7b8e7dbd47f238cf8"),
+  title: 'The way of kings',
+  author: 'Brandon Sanderson',
+  Rating: 9,
+  pages: 400,
+  generes: [
+    'fantacy'
+  ],
+  reviews: [
+    {
+      name: 'yoshi',
+      body: 'Great book!!'
+    },
+    {
+      name: 'vinay',
+      body: 'noce book'
+    }
+  ]
+}
+-------------------------------------------------------------
+operator and complex queries($gt,$ls,$gte,$lse and $or)
+
+
+1>To retrieve the document which books rating is 7
+db.books.find({rating:7})
+
+2.To retrieve the document which books rating is greater than 7
+db.books.find({rating:{$gt:7}})
+
+3.To retrieve the document which books rating is less than 8
+$lse=>less than or equal to         :$ls=>less than
+$gte=>greater than or equal to      :$gt=>greater than
+
+
+3.using $or operator
+db.books.find({$or:[{rating:7},{rating:9}]})
+
+db.books.find({$or:[{pages:{$ls:300}},{rating:9}]})
+
+-------------------------------------------------------------------
+$in or $nin operator
+
+1.db.books.find({Rating:{$in:[7,8,9]}})
+2.db.books.find({Rating:{$nin:[7,8]}})
+
+
+-----------------------------------------------------------------------
+Quering Arrays
+
+1.db.books.find(genres:"Magic")
+2.db.books.find(genres:["Magic"])
+3.db.books.find({generes:{$all:["fantasy","Magic"]}})
+4.db.books.find({"reviews.name":"luigi"})
+----------------------------------------------------------------------------
+Relationship Between Collection
+->Embeded type
+->Reference type
+---------------------------------------------------------------------------------------------------------------------------------------------------
+1.embeded type of relationship(one-to-one)
+
+db.Customer.insertOne({name:"Mark",age:30,from:["Barlin","Germeny"],contact:{email:"mark@gmail.com",phoneno:7259602151}})
+
+
+{
+  _id: ObjectId("6530fc54b8e7dbd47f238cfd"),
+  name: 'John',
+  age: 28,
+  from: [
+    'London',
+    'UK'
+  ],
+  contact: {
+    email: 'john@gmail.com',
+    phoneno: 7259602150
+  }
+}
+{
+  _id: ObjectId("6530fcfab8e7dbd47f238cfe"),
+  name: 'Mark',
+  age: 30,
+  from: [
+    'Barlin',
+    'Germeny'
+  ],
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  }
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+2.one -to-one using references
+
+{
+  _id: ObjectId("653101dab8e7dbd47f238cff"),
+  Street: 'Avenu park',
+  HouseNo: 46,
+  Pin: 980909,
+  City: 'London',
+  Country: 'UK'
+}
+{
+  _id: ObjectId("653101dab8e7dbd47f238d00"),
+  Street: 'Gandhi Nagar',
+  HouseNo: 56,
+  Pim: 879899,
+  City: 'Shimoga',
+  Country: 'India'
+}
+
+
+
+-----------------------------------------------------------------------------------
+
+
+db.address.find()
+{
+  _id: ObjectId("653101dab8e7dbd47f238cff"),
+  Street: 'Avenu park',
+  HouseNo: 46,
+  Pin: 980909,
+  City: 'London',
+  Country: 'UK'
+}
+{
+  _id: ObjectId("653101dab8e7dbd47f238d00"),
+  Street: 'Gandhi Nagar',
+  HouseNo: 56,
+  Pim: 879899,
+  City: 'Shimoga',
+  Country: 'India'
+}
+db.Customer.insertOne({name:"Mark",age:30,from:["Barlin","Germeny"],contact:{email:"mark@gmail.com",phoneno:7259602151}})
+{
+  acknowledged: true,
+  insertedId: ObjectId("65310344b8e7dbd47f238d01")
+}
+db.Customer.insertOne({name:"John",age:28,from:["London","UK"],contact:{email:"john@gmail.com",phoneno:7259602150}})
+{
+  acknowledged: true,
+  insertedId: ObjectId("65310352b8e7dbd47f238d02")
+}
+db.Customer.updateOne({name:"John"},{$set:{address:{Street:"Avenu park",HouseNo:46,Pin:980909,City:"London",Country:"UK"}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.updateOne({name:"Mark"},{$set:{address:{Street:"Gandhi Nagar",HouseNo:56,Pim:879899,City:"Shimoga",Country:"India"}}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.find()
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  from: [
+    'Barlin',
+    'Germeny'
+  ],
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: {
+    Street: 'Gandhi Nagar',
+    HouseNo: 56,
+    Pim: 879899,
+    City: 'Shimoga',
+    Country: 'India'
+  }
+}
+{
+  _id: ObjectId("65310352b8e7dbd47f238d02"),
+  name: 'John',
+  age: 28,
+  from: [
+    'London',
+    'UK'
+  ],
+  contact: {
+    email: 'john@gmail.com',
+    phoneno: 7259602150
+  },
+  address: {
+    Street: 'Avenu park',
+    HouseNo: 46,
+    Pin: 980909,
+    City: 'London',
+    Country: 'UK'
+  }
+}
+db.address.find()
+{
+  _id: ObjectId("653101dab8e7dbd47f238cff"),
+  Street: 'Avenu park',
+  HouseNo: 46,
+  Pin: 980909,
+  City: 'London',
+  Country: 'UK'
+}
+{
+  _id: ObjectId("653101dab8e7dbd47f238d00"),
+  Street: 'Gandhi Nagar',
+  HouseNo: 56,
+  Pim: 879899,
+  City: 'Shimoga',
+  Country: 'India'
+}
+db.Customer.updateOne({name:"Mark"},{$set:ObjectId("653101dab8e7dbd47f238d00")}})
+Error: clone(t={}){const r=t.loc||{};return e({loc:new Position("line"in r?r.line:this.loc.line,"column"in r?r.column:...<omitted>...)} could not be cloned.
+db.Customer.updateOne({name:"Mark"},{$set:{address:ObjectId("653101dab8e7dbd47f238d00")}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.updateOne({name:"John"},{$set:{address:ObjectId("653101dab8e7dbd47f238cff")}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.find()
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  from: [
+    'Barlin',
+    'Germeny'
+  ],
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00")
+}
+{
+  _id: ObjectId("65310352b8e7dbd47f238d02"),
+  name: 'John',
+  age: 28,
+  from: [
+    'London',
+    'UK'
+  ],
+  contact: {
+    email: 'john@gmail.com',
+    phoneno: 7259602150
+  },
+  address: ObjectId("653101dab8e7dbd47f238cff")
+}
+db.Customer.updateMany({},{$unset:{from:""}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 2,
+  modifiedCount: 2,
+  upsertedCount: 0
+}
+db.Customer.find()
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00")
+}
+
+
+
+db.Customer.aggregate({$lookup:{from:"address",localField:"address",foreignField:"_id",as:"add"}})
+
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00"),
+  add: [
+    {
+      _id: ObjectId("653101dab8e7dbd47f238d00"),
+      Street: 'Gandhi Nagar',
+      HouseNo: 56,
+      Pim: 879899,
+      City: 'Shimoga',
+      Country: 'India'
+    }
+  ]
+}
+-------------------------------------------------------------------------------------------------------------------------------
+One to many(Embeded)
+
+db.Customer.updateOne({name:"John"},{$set:{paymentMethod:[{cardNo:1234567890891234,expiry:"03/2024"},{cardNo:1234123456785678,expiry:"09/2017"}]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.updateOne({name:"Mark"},{$set:{paymentMethod:[{cardNo:1234567890891239,expiry:"03/2025"},{cardNo:1234123456785670,expiry:"09/2016"}]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.find()
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00"),
+  paymentMethod: [
+    {
+      cardNo: 1234567890891239,
+      expiry: '03/2025'
+    },
+    {
+      cardNo: 1234123456785670,
+      expiry: '09/2016'
+    }
+  ]
+}
+{
+  _id: ObjectId("65310352b8e7dbd47f238d02"),
+  name: 'John',
+  age: 28,
+  contact: {
+    email: 'john@gmail.com',
+    phoneno: 7259602150
+  },
+  address: ObjectId("653101dab8e7dbd47f238cff"),
+  paymentMethod: [
+    {
+      cardNo: 1234567890891234,
+      expiry: '03/2024'
+    },
+    {
+      cardNo: 1234123456785678,
+      expiry: '09/2017'
+    }
+  ]
+}
+----------------------------------------------------------------
+
+One to many(Referenced type)
+
+db.order.insertOne({_id:1,date:new Date("03-02-2011"),pid:[123,456]})
+{
+  acknowledged: true,
+  insertedId: 1
+}
+db.order.insertOne({_id:2,date:new Date("03-02-2011"),pid:[123,789]})
+{
+  acknowledged: true,
+  insertedId: 2
+}
+db.order.insertOne({_id:3,date:new Date("03-02-2011"),pid:[123,787,457]})
+{
+  acknowledged: true,
+  insertedId: 3
+}
+db.order.insertOne({_id:4,date:new Date("03-02-2011"),pid:[546]})
+{
+  acknowledged: true,
+  insertedId: 4
+}
+db.order.find()
+{
+  _id: 1,
+  date: 2011-03-01T18:30:00.000Z,
+  pid: [
+    123,
+    456
+  ]
+}
+{
+  _id: 2,
+  date: 2011-03-01T18:30:00.000Z,
+  pid: [
+    123,
+    789
+  ]
+}
+{
+  _id: 3,
+  date: 2011-03-01T18:30:00.000Z,
+  pid: [
+    123,
+    787,
+    457
+  ]
+}
+{
+  _id: 4,
+  date: 2011-03-01T18:30:00.000Z,
+  pid: [
+    546
+  ]
+}
+
+
+db.Customer.updateOne({name:"Mark"},{$set:{order:[1,2,4]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.updateOne({name:"John"},{$set:{order:[3]}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+db.Customer.find()
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00"),
+  paymentMethod: [
+    {
+      cardNo: 1234567890891239,
+      expiry: '03/2025'
+    },
+    {
+      cardNo: 1234123456785670,
+      expiry: '09/2016'
+    }
+  ],
+  order: [
+    1,
+    2,
+    4
+  ]
+}
+{
+  _id: ObjectId("65310352b8e7dbd47f238d02"),
+  name: 'John',
+  age: 28,
+  contact: {
+    email: 'john@gmail.com',
+    phoneno: 7259602150
+  },
+  address: ObjectId("653101dab8e7dbd47f238cff"),
+  paymentMethod: [
+    {
+      cardNo: 1234567890891234,
+      expiry: '03/2024'
+    },
+    {
+      cardNo: 1234123456785678,
+      expiry: '09/2017'
+    }
+  ],
+  order: [
+    3
+  ]
+}
+
+
+
+db.Customer.aggregate({$lookup:{from:"order",localField:"order",foreignField:"_id",as:"od"}})
+{
+  _id: ObjectId("65310344b8e7dbd47f238d01"),
+  name: 'Mark',
+  age: 30,
+  contact: {
+    email: 'mark@gmail.com',
+    phoneno: 7259602151
+  },
+  address: ObjectId("653101dab8e7dbd47f238d00"),
+  paymentMethod: [
+    {
+      cardNo: 1234567890891239,
+      expiry: '03/2025'
+    },
+    {
+      cardNo: 1234123456785670,
+      expiry: '09/2016'
+    }
+  ],
+  order: [
+    1,
+    2,
+    4
+  ],
+  od: [
+    {
+      _id: 4,
+      date: 2011-03-01T18:30:00.000Z,
+      pid: [
+        546
+      ]
+    },
+    {
+      _id: 2,
+      date: 2011-03-01T18:30:00.000Z,
+      pid: [
+        123,
+        789
+      ]
+    },
+    {
+      _id: 1,
+      date: 2011-03-01T18:30:00.000Z,
+      pid: [
+        123,
+        456
+      ]
+    }
+  ]
+}
+--------------------------------------------------------------------------------------------
+Many to many Relationship using refrence

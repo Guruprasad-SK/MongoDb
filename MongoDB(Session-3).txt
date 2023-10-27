@@ -1,0 +1,119 @@
+
+db.employees.insertMany([
+  { "_id": 101, "name": "Vinay" },
+  { "_id": 102, "name": "Abhi" },
+  { "_id": 103, "name": "Krish" }
+]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': 101,
+    '1': 102,
+    '2': 103
+  }
+}
+db.employees.find()
+{
+  _id: 101,
+  name: 'Vinay'
+}
+{
+  _id: 102,
+  name: 'Abhi'
+}
+{
+  _id: 103,
+  name: 'Krish'
+}
+
+___________________________________________________________
+
+db.clients.insertMany([
+  { "_id": 201, "name": "Lewyo" },
+  { "_id": 202, "name": "Infionic" },
+  { "_id": 203, "name": "Slack" }
+]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': 201,
+    '1': 202,
+    '2': 203
+  }
+}
+db.clients.find()
+{
+  _id: 201,
+  name: 'Lewyo'
+}
+{
+  _id: 202,
+  name: 'Infionic'
+}
+{
+  _id: 203,
+  name: 'Slack'
+}
+db.clients.insertMany([
+  { "_id": 201, "name": "Lewyo" },
+  { "_id": 202, "name": "Infionic" },
+  { "_id": 203, "name": "Slack" }
+]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': 201,
+    '1': 202,
+    '2': 203
+  }
+}
+db.clients.find()
+{
+  _id: 201,
+  name: 'Lewyo'
+}
+{
+  _id: 202,
+  name: 'Infionic'
+}
+{
+  _id: 203,
+  name: 'Slack'
+}
+__________________________________________________________________
+
+db.organizations.insertOne({
+  "_id": 1,
+  "name": "Example Org",
+  "employee_ids": [101, 102, 103],
+  "client_ids": [201, 202, 203]
+});
+
+db.organizations.find()
+{
+  _id: 1,
+  name: 'Example Org',
+  employee_ids: [
+    101,
+    102,
+    103
+  ],
+  client_ids: [
+    201,
+    202,
+    203
+  ]
+}
+
+
+______________________________________________________________
+const organizationId = 1;
+
+const organization = db.organizations.findOne({ "_id": organizationId });
+if (organization) {
+  const employeeIds = organization.employee_ids;
+  const clientIds = organization.client_ids;
+  db.organizations.deleteOne({ "_id": organizationId });
+  db.employees.deleteMany({ "_id": { $in: employeeIds } });
+  db.clients.deleteMany({ "_id": { $in: clientIds } });
+}

@@ -1,0 +1,233 @@
+MongoDb
+
+Database ,Document & Collection
+
+->DataBase
+  Database is a physical container for collections. Each database gets its own set of files on the file system. 
+A single MongoDB server typically has multiple databases.
+
+->collections
+Collection is a group of MongoDB documents. It is the equivalent of an RDBMS table. A collection exists within a single database. 
+Collections do not enforce a schema. Documents within a collection can have different fields. Typically, 
+all documents in a collection are of similar or related purpose.
+
+->Document
+A document is a set of key-value pairs. Documents have dynamic schema. Dynamic schema means that documents in the same collection do not 
+need to have the same set of fields or structure, and common fields in a collection's documents may hold different types of data.
+
+
+RDBMS	           MongoDB
+Database	 Database
+Table        	 Collection
+Tuple/Row	 Document
+column	         Field
+Table Join	 Embedded Documents
+Primary Key	
+
+Any relational database has a typical schema design that shows number of tables and the relationship between these tables. 
+While in MongoDB, there is no concept of relationship.
+
+Advantages of MongoDB over RDBMS
+Schema less − MongoDB is a document database in which one collection holds different documents. Number of fields, 
+content and size of the document can differ from one document to another.
+
+Structure of a single object is clear.
+No complex joins.
+Deep query-ability. MongoDB supports dynamic queries on documents using a document-based query language that's nearly as powerful as SQL.
+Ease of scale-out − MongoDB is easy to scale.
+Conversion/mapping of application objects to database objects not needed.
+Uses internal memory for storing the (windowed) working set, enabling faster access of data.
+
+Why Use MongoDB?
+Document Oriented Storage − Data is stored in the form of JSON style documents.
+Index on any attribute
+Replication and high availability
+Auto-Sharding
+Rich queries
+Fast in-place updates
+Professional support by MongoDB
+
+->Show dbs
+CRUD
+
+CREATE------------>
+->use mydb
+->db.student.insertOne({name:"Vinay"})->To insert data
+->show collections
+->db.student.find()
+->db.student.find().pretty()
+->db.dropDatabase()->To drop database
+
+----------------------------------------------------------------------------------------------------
+switched to db Organisation
+Organisation> db.Employee.insertMany([{name:"Vinay",Designation:"Data_Engineer",Department:"Technical"},{name:"Sai",Designation:"HR",Department:"Non technical"}])
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("652fa0926fb945640e5cd0d3"),
+    '1': ObjectId("652fa0926fb945640e5cd0d4")
+  }
+}
+
+Organisation> db.Employee.find()
+[
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d3"),
+    name: 'Vinay',
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  },
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d4"),
+    name: 'Sai',
+    Designation: 'HR',
+    Department: 'Non technical'
+  }
+]
+Organisation> db.Employee.find().pretty()
+[
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d3"),
+    name: 'Vinay',
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  },
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d4"),
+    name: 'Sai',
+    Designation: 'HR',
+    Department: 'Non technical'
+  }
+]
+-----------------------------------------------------------------------------------------------------------
+Projection AND LIMIT
+READ-------------->(db.collections.find(query,project))
+1> To SHOW PARTICULAR DOCUMENT BASED ON GIVEN FIELD
+->db.Employee.find({name:"Vinay"}).pretty()
+[
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d3"),
+    name: 'Vinay',
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  }
+]
+
+2> TO SHOW PARTICULAR FIELD IN ONE DOCUMENT
+Organisation> db.Employee.find({name:"Vinay"},{name:0}).pretty()
+[
+  {
+    _id: ObjectId("652fa0926fb945640e5cd0d3"),
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  }
+]
+
+or
+
+Organisation> db.Employee.find({name:"Vinay"},{name:1}).pretty()
+
+[ { _id: ObjectId("652fa0926fb945640e5cd0d3"), name: 'Vinay' } ]
+
+or
+
+Organisation> db.Employee.find({name:"Vinay"},{_id:0,name:1}).pretty()
+[ { name: 'Vinay' } ]
+
+or
+
+TO GET TOP 1 RESULT BASED ON FIELD
+Organisation> db.Employee.find({Department:"HR"}).Pretty().limit(1)
+
+
+TO GET SKIP 1ST RESULT BASED ON FIELD
+Organisation> db.Employee.find({Department:"HR"}).Pretty().skip(1)
+----------------------------------------------------------------------------------------------------------------------
+UPDATE
+
+updataOne()=>db.collection_name.updateOne(<filter>,<update>)
+updataMany()=>db.collection_name.updateMany(<filter>,<update>)
+
+
+->To Update one particular field in one document
+Company> db.Employees.insertMany([{name:"Sonu_nigam",Designation:"Data_Engineer",Department:"Technical"}])
+{
+  acknowledged: true,
+  insertedIds: { '0': ObjectId("652fc96d619ab11dfc7843e1") }
+}
+Company> db.Employees.find()
+[
+  {
+    _id: ObjectId("652fc8fb619ab11dfc7843e0"),
+    name: 'Vinay',
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  },
+  {
+    _id: ObjectId("652fc96d619ab11dfc7843e1"),
+    name: 'Sonu_nigam',
+    Designation: 'Data_Engineer',
+    Department: 'Technical'
+  }
+]
+
+Company> db.Employees.updateOne({name:"Vinay"},{$set:{Designation:"Dotnet_Developer"}})
+{
+  acknowledged: true,
+  insertedId: null,
+  matchedCount: 1,
+  modifiedCount: 1,
+  upsertedCount: 0
+}
+
+
+
+To update one particular field from two different field
+
+
+Company> db.Employees.updateMany({Designation:"Dotnet_Developer"},{$set:{Department:"Progammer"}})
+{ncaught:
+  acknowledged: true,ed token, expected "," (1:87)
+  insertedId: null,
+  matchedCount: 2,.updateMany({Designation:"Dotnet_Developer"},{$set:{Department:"Progammer"})
+  modifiedCount: 2,                                                                          ^
+  upsertedCount: 0
+}
+-----------------------------------------------------------------------------------------------------------------
+DELETE
+
+deleteOne()=>db.collection_name.deleteOne<filter>
+deleteOne()=>db.collection_name.deleteMany<filter>
+
+
+ex:-db.Employees.deleteOne({name:"Vinay"})
+    db.Employees.deleteMany({Designation:"Dotnet_Developer"})
+
+-------------------------------------------------------------------------------------------------------------------------
+
+SORT
+
+db.COLLECTION_NAME.find().sort({KEY:1})
+
+Company> db.Employees.find().sort({key:1})
+[
+  {
+    _id: ObjectId("652fc8fb619ab11dfc7843e0"),
+    name: 'Vinay',
+    Designation: 'Dotnet_Developer',
+    Department: 'Progammer'
+  },
+  {
+    _id: ObjectId("652fc96d619ab11dfc7843e1"),
+    name: 'Sonu_nigam',
+    Designation: 'Dotnet_Developer',
+    Department: 'Progammer'
+  }
+]
+
+
+Company> db.Employees.find({},{name:1,_id:0}).sort({name:-1})
+[ { name: 'Vinay' }, { name: 'Sonu_nigam' } ]
+
+---------------------------------------------------------------------------------------------------------------
+
